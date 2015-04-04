@@ -24,12 +24,18 @@
 
 #define JSON_ASSERT_UNREACHABLE assert( false )
 
+namespace {
+// This is a workaround to avoid the static initialization of Value::null.
+// const Value Value::null;
+static const unsigned char kNull[sizeof(Json::Value)] = { 0 };
+static const Json::Value* ValueNull = reinterpret_cast<const Json::Value*>(kNull);
+}
+
 namespace Json {
 
-// This is a walkaround to avoid the static initialization of Value::null.
-// const Value Value::null;
+
 static const unsigned char kNull[sizeof(Value)] = { 0 };
-const Value& Value::null = reinterpret_cast<const Value&>(kNull);
+const Value& Value::null = *ValueNull;
 
 const Int Value::minInt = Int( ~(UInt(-1)/2) );
 const Int Value::maxInt = Int( UInt(-1)/2 );
